@@ -6,14 +6,17 @@ import com.fitness.activityservice.service.ActivityService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/activities")
 @AllArgsConstructor
 public class ActivityController {
     private ActivityService activityService;
+    private WebClient userServiceWebClient;
 
     @PostMapping
     public ResponseEntity<ActivityResponse> trackActivity(@RequestBody ActivityRequest request) {
@@ -29,4 +32,5 @@ public class ActivityController {
     public ResponseEntity <ActivityResponse> getActivity(@PathVariable String activityId) {
         return ResponseEntity.ok(activityService.getActivityById(activityId));
     }
+
 }

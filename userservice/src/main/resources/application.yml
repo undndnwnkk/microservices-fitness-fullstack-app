@@ -3,7 +3,9 @@ server:
 
 spring:
   application:
-    name: userservice
+    # важно: это имя будет использоваться клиентами ("http://USER-SERVICE")
+    name: USER-SERVICE
+
   datasource:
     url: jdbc:postgresql://localhost:5432/fitness_user_db
     username: postgres
@@ -12,3 +14,22 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    service-url:
+      # локальный сервер еврейки
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    # публиковать IP вместо hostname (чтобы не было arch-undndnwnkk)
+    prefer-ip-address: true
+    # опционально — зафиксировать IP вручную (если нужно)
+    # ip-address: 127.0.0.1
+    # опционально — стабильный instanceId в UI
+    instance-id: ${spring.application.name}:${server.port}
+
+# по желанию, чтобы было где смотреть ошибки
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
