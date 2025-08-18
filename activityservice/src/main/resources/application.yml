@@ -18,9 +18,8 @@ eureka:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
 
-# по желанию
-logging:
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    reactor.netty.http.client: INFO   # если дебажишь webclient — поднимай до DEBUG
+rabbitmq:
+  exchange:
+    name: fitness.exchange
+    queue: activity.queue
+    routing: activity.tracking
