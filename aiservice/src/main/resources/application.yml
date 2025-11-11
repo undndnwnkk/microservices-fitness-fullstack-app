@@ -31,6 +31,6 @@ rabbitmq:
     key: activity.tracking
 
 gemini:
-  api:
-    url: ${GEMINI_API_URL}
-    key: ${GEMINI_API_KEY}
+  project-id: "fitness-app-477915"
+  location: "europe-west3"
+  model-name: "gemini-1.5-flash-latest"

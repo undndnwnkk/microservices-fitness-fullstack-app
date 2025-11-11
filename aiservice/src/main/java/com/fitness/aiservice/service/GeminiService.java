@@ -1,42 +1,42 @@
 package com.fitness.aiservice.service;
 
-import lombok.RequiredArgsConstructor;
+import com.google.cloud.vertexai.VertexAI;
+import com.google.cloud.vertexai.api.GenerateContentResponse;
+import com.google.cloud.vertexai.generativeai.GenerativeModel;
+import com.google.cloud.vertexai.generativeai.ResponseHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 @Service
+@Slf4j
 public class GeminiService {
-    private final WebClient webClient;
 
-    @Value("${gemini.api.url}")
-    private String geminiApiUrl;
-    @Value("${gemini.api.key}")
-    private String geminiApiKey;
+    @Value("${gemini.project-id}")
+    private String projectId;
 
-    public GeminiService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.build();
-    }
+    @Value("${gemini.location}")
+    private String location;
+
+    @Value("${gemini.model-name}")
+    private String modelName;
 
     public String getAnswer(String question) {
-        Map<String,Object> requestBody = Map.of(
-                "contents", new Object[] {
-                        Map.of("parts", new Object[] {
-                                Map.of("text", question)
-                        })
-                }
-        );
-        String response = webClient.post()
-                .uri(geminiApiUrl + geminiApiKey)
-                .header("Content-Type: application/json")
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        try (VertexAI vertexAI = new VertexAI(projectId, location)) {
 
-        return response;
+            GenerativeModel model = new GenerativeModel(modelName, vertexAI);
+
+            GenerateContentResponse response = model.generateContent(question);
+
+            String textResponse = ResponseHandler.getText(response);
+            log.info("AI response received successfully.");
+            return textResponse;
+
+        } catch (IOException e) {
+            log.error("Error communicating with Vertex AI", e);
+            return "Error: Could not get a response from the AI service.";
+        }
     }
 }
